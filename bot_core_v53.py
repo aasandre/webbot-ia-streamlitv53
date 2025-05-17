@@ -206,7 +206,12 @@ async def executar_bot():
         await ws.send(json.dumps({"ticks": CONFIG["SYMBOL"], "subscribe": 1}))
         while True:
             msg = await ws.recv()
-            tick = float(json.loads(msg)["tick"]["quote"])
+            data = json.loads(msg)
+            if "tick" in data and "quote" in data["tick"]:
+                tick = float(data["tick"]["quote"])
+            else:
+                continue  # ou logue o problema
+
             tick_history.append(tick)
             if len(tick_history) < 30:
                 continue
