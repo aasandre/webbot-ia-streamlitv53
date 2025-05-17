@@ -1,5 +1,3 @@
-# bot_core_v53.py
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -46,8 +44,6 @@ ia_contexto = None
 features_usadas = []
 features_contexto = []
 
-# Modelos
-
 class ModeloMLPPyTorch(nn.Module):
     def __init__(self, input_size):
         super().__init__()
@@ -86,8 +82,8 @@ class IA_PyTorch:
             self.modelo.train()
             self.optim.zero_grad()
             out = self.modelo(X_tensor)
-            losses = self.loss_fn(out, y_tensor)
-            loss = (losses * pesos_tensor).mean()
+            loss = self.loss_fn(out, y_tensor)
+            loss = (loss * pesos_tensor).mean()
             loss.backward()
             self.optim.step()
 
@@ -189,10 +185,10 @@ def registrar_dados(ind, resultado):
         ia = EnsembleIA(features_usadas)
         ia.treinar(dados)
     if "contexto" in dados.columns:
-    features_contexto = list(dados.columns.drop(["resultado", "contexto"]))
-    if features_contexto:  # só treina se tiver features
-        ia_contexto = IA_Contexto(features_contexto)
-        ia_contexto.treinar(dados)
+        features_contexto = list(dados.columns.drop(["resultado", "contexto"]))
+        if features_contexto:
+            ia_contexto = IA_Contexto(features_contexto)
+            ia_contexto.treinar(dados)
     return dados
 
 def iniciar_bot_em_thread():
@@ -208,11 +204,8 @@ async def executar_bot():
         while True:
             msg = await ws.recv()
             data = json.loads(msg)
-            if "tick" in data and "quote" in data["tick"]:
-                tick = float(data["tick"]["quote"])
-            else:
-                continue  # ou logue o problema
-
+            if "tick" not in data: continue
+            tick = float(data["tick"]["quote"])
             tick_history.append(tick)
             if len(tick_history) < 30:
                 continue
