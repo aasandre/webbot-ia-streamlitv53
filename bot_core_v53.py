@@ -189,7 +189,8 @@ def registrar_dados(ind, resultado):
         ia = EnsembleIA(features_usadas)
         ia.treinar(dados)
     if "contexto" in dados.columns:
-        features_contexto = list(dados.columns.drop(["resultado", "contexto"]))
+    features_contexto = list(dados.columns.drop(["resultado", "contexto"]))
+    if features_contexto:  # só treina se tiver features
         ia_contexto = IA_Contexto(features_contexto)
         ia_contexto.treinar(dados)
     return dados
