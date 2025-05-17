@@ -57,7 +57,7 @@ col4.metric("💰 Lucro Total", f"${estatisticas['lucro_total']:.2f}")
 # ========== Diagnóstico ==========
 st.subheader("📋 Diagnóstico IA (últimos 50)")
 if os.path.exists("diagnostico_ia.csv"):
-    df_diag = pd.read_csv("diagnostico_ia.csv")
+    df_diag = pd.read_csv("diagnostico_ia.csv", encoding="latin1")
     st.dataframe(df_diag.tail(50), use_container_width=True)
 else:
     st.info("Nenhum diagnóstico encontrado ainda.")
